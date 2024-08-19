@@ -4,12 +4,13 @@ const app = express();
 
 app.use(cors());
 
-let requestCount = 0;
-let lastResetTime = Date.now();
+let requestCount = 0; // кількість запитів за останню секунду
+let lastResetTime = Date.now(); // час останнього скидання лічильника
 
+// Оновлює лічильник запитів, якщо пройшла 1 секунда після останнього скидання.
 function resetRequestCount() {
     const now = Date.now();
-    if (now - lastResetTime >= 1000) { // 1 second window
+    if (now - lastResetTime >= 1000) { 
         requestCount = 0;
         lastResetTime = now;
     }

@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
+import { Button, TextField, List, ListItem, Container, Typography } from '@mui/material';
 
 function App() {
-  const [concurrency, setConcurrency] = useState(4);
-  const [isRunning, setIsRunning] = useState(false);
-  const [results, setResults] = useState([]);
+  const [concurrency, setConcurrency] = useState(10); //максимальну кількість активних запитів
+  const [isRunning, setIsRunning] = useState(false); // чи йдуть запити
+  const [results, setResults] = useState([]); // список результатів
 
   const handleStart = async () => {
     setIsRunning(true);
     setResults([]);
-    const totalRequests = 1000;
+    const totalRequests = 1000; // к-ть запитів які треба виконати
     let activeRequests = 0;
     let completedRequests = 0;
 
@@ -43,12 +44,10 @@ function App() {
       }
     };
 
-    // Initial requests
     for (let i = 0; i < concurrency; i++) {
       startNextRequest();
     }
 
-    // Throttle requests per second
     while (completedRequests < totalRequests) {
       await delay(1000 / concurrency);
     }
@@ -57,25 +56,38 @@ function App() {
   };
 
   return (
-    <div>
-      <input
+    <Container maxWidth="sm" sx={{ mt: 4 }}>
+      <Typography variant="h4" gutterBottom>
+        Concurrency Request Tester
+      </Typography>
+      <TextField
         type="number"
+        label="Concurrency (1-100)"
         value={concurrency}
         onChange={(e) => setConcurrency(Number(e.target.value))}
-        min="1"
-        max="100"
-        required
+        fullWidth
+        margin="normal"
         disabled={isRunning}
+        inputProps={{ min: 1, max: 100 }}
       />
-      <button onClick={handleStart} disabled={isRunning}>
+      <Button 
+        variant="contained" 
+        color="primary" 
+        onClick={handleStart} 
+        disabled={isRunning}
+        fullWidth
+        sx={{ mb: 2 }}
+      >
         {isRunning ? 'Running...' : 'Start'}
-      </button>
-      <ul>
+      </Button>
+      <List>
         {results.map((result, index) => (
-          <li key={index}>{result}</li>
+          <ListItem key={index}>
+            {result}
+          </ListItem>
         ))}
-      </ul>
-    </div>
+      </List>
+    </Container>
   );
 }
 
